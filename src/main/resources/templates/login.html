@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div th:insert="~{fragments/menu :: #nav-menu}"></div>
+
+<p th:if="${loginError}" class="error">Wrong username or password</p>
+<form th:action="@{/auth}" method="post">
+    <table style="border: 1px">
+       <tr>
+           <td>Name</td>
+           <td><label>
+               <input type="text" name="username">
+           </label></td>
+       </tr>
+        <tr>
+            <td>Password</td>
+            <td><label>
+                <input type="password" name="password">
+            </label></td>
+        </tr>
+    </table>
+    <button type="submit">Log in</button>
+</form>
+</body>
+</html>
