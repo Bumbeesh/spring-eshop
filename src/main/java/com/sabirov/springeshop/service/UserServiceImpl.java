@@ -5,6 +5,8 @@ import com.sabirov.springeshop.dao.UserRepository;
 import com.sabirov.springeshop.domain.Role;
 import com.sabirov.springeshop.domain.User;
 import com.sabirov.springeshop.dto.UserDTO;
+import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,10 +49,41 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+
+    @Override
     public List<UserDTO> getAll(){
         return userRepository.findAll().stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public User findByName(String name) {
+        return userRepository.findFirstByName(name);
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(UserDTO dto) {
+        User savedUser = userRepository.findFirstByName(dto.getUsername());
+        if (savedUser == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        boolean isChanged = false;
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            savedUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+            isChanged = true;
+        }
+
+        if (isChanged) {
+            userRepository.save(savedUser);
+        }
+
     }
 
     @Override
